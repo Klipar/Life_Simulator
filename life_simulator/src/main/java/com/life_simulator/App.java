@@ -18,18 +18,27 @@ public class App extends Application {
     private double mouseAnchorX, mouseAnchorY;
     private double initialOffsetX, initialOffsetY;
 
-    private final double CELL_SIZE = 20; // cell size
+    private final double CELL_SIZE = 20;
 
+    @SuppressWarnings("unused")
     @Override
     public void start(Stage primaryStage) {
         Group root = new Group();
-        Canvas canvas = new Canvas(1000, 1200);
+        Canvas canvas = new Canvas();
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // Initial grid drawing
-        drawGrid(gc);
+        Scene scene = new Scene(root, 820, 600);
+        root.getChildren().add(canvas);
 
-        // Zoom: Handle scrolling of the mouse wheel
+        // Bind Canvas dimensions to the window size
+        canvas.widthProperty().bind(scene.widthProperty());
+        canvas.heightProperty().bind(scene.heightProperty());
+
+        // Update the grid when resizing
+        canvas.widthProperty().addListener(evt -> drawGrid(gc));
+        canvas.heightProperty().addListener(evt -> drawGrid(gc));
+
+        // Zoom: scroll with the mouse
         canvas.setOnScroll((ScrollEvent event) -> {
             double delta = event.getDeltaY();
             // Determine the zoom ratio: zoom in or out
@@ -45,7 +54,7 @@ public class App extends Application {
             drawGrid(gc);
         });
 
-        // Pan: by holding down the middle mouse button
+        // Pan with the mouse
         canvas.setOnMousePressed(e -> {
             if (e.getButton() == MouseButton.MIDDLE) {
                 mouseAnchorX = e.getX();
@@ -66,7 +75,6 @@ public class App extends Application {
         // Left mouse button: output the cell coordinates to the console
         canvas.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
-                // Convert coordinates from screen to world coordinates
                 double worldX = (e.getX() - offsetX) / scale;
                 double worldY = (e.getY() - offsetY) / scale;
                 // Calculating cell indices (assuming that cells have the size CELL_SIZE)
@@ -76,31 +84,31 @@ public class App extends Application {
             }
         });
 
-        root.getChildren().add(canvas);
-        Scene scene = new Scene(root, 800, 600);
         primaryStage.setTitle("Life simulation");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // Draw the mesh after the first render
+        drawGrid(gc);
     }
 
     // Method for drawing a grid
     private void drawGrid(GraphicsContext gc) {
-        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+        double width = gc.getCanvas().getWidth();
+        double height = gc.getCanvas().getHeight();
+
+        gc.clearRect(0, 0, width, height);
         gc.save();
         // Apply transformations: shift and scale
         gc.translate(offsetX, offsetY);
         gc.scale(scale, scale);
 
-        int cols = 800;
-        int rows = 600;
         gc.setStroke(Color.LIGHTGRAY);
-        for (int i = 0; i <= cols; i++) {
-            double x = i * CELL_SIZE;
-            gc.strokeLine(x, 0, x, rows * CELL_SIZE);
+        for (double x = 0; x <= width; x += CELL_SIZE) {
+            gc.strokeLine(x, 0, x, height);
         }
-        for (int j = 0; j <= rows; j++) {
-            double y = j * CELL_SIZE;
-            gc.strokeLine(0, y, cols * CELL_SIZE, y);
+        for (double y = 0; y <= height; y += CELL_SIZE) {
+            gc.strokeLine(0, y, width, y);
         }
         gc.restore();
     }
