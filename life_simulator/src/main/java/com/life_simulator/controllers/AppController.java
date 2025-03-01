@@ -25,7 +25,9 @@ public class AppController {
     private double offsetY = 0;
     private double mouseAnchorX, mouseAnchorY;
     private double initialOffsetX, initialOffsetY;
-    private final double CELL_SIZE = 20;
+    private double CELL_SIZE = 20;
+    private final int CELLS_IN_WIDTH = 50;
+    private final int CELLS_IN_HEIGHT = 30;
 
     @SuppressWarnings("unused")
     @FXML
@@ -69,8 +71,8 @@ public class AppController {
                 double worldY = (e.getY() - offsetY) / scale;
                 int cellX = (int)(worldX / CELL_SIZE);
                 int cellY = (int)(worldY / CELL_SIZE);
-                if (cellX > (CELLS_IN_WIDTH-1) || cellX < 0) cellX = -1;
-                if (cellY > (CELLS_IN_HEIGHT-1) || cellY < 0) cellY = -1;
+                if (cellX > (CELLS_IN_WIDTH-1) || cellX < 0 || worldX < 0) cellX = -1;
+                if (cellY > (CELLS_IN_HEIGHT-1) || cellY < 0 || worldY < 0) cellY = -1;
                 System.out.println("Cell: (" + cellX + ", " + cellY + ")");
             }
         });
