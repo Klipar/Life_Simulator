@@ -8,7 +8,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
@@ -20,8 +19,6 @@ public class AppController {
 
     private boolean isMenuOpen = true;
     private double menuWidth = 200;
-    @SuppressWarnings("unused")
-    private double stageWidth;
 
     private double scale = 1.0;
     private double offsetX = 0;
@@ -35,8 +32,15 @@ public class AppController {
     public void initialize() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // sideMenu.setLayoutX(CANVAS_WIDTH);
         toggleMenuButton.setOnAction(e -> toggleMenu());
+
+        canvas.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.widthProperty().addListener((o, oldVal, newVal) -> updateCanvasSize());
+                newScene.heightProperty().addListener((o, oldVal, newVal) -> updateCanvasSize());
+                updateCanvasSize();
+            }
+        });
 
         canvas.widthProperty().addListener(evt -> drawGrid(gc));
         canvas.heightProperty().addListener(evt -> drawGrid(gc));
@@ -72,22 +76,14 @@ public class AppController {
         drawGrid(gc);
     }
 
-    @SuppressWarnings("unused")
-    public void setStage(Stage stage) {
-        stageWidth = stage.getWidth();
-        stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            stageWidth = newVal.doubleValue();
-            updateMenuPosition();
-        });
+    private void updateCanvasSize() {
+        double newWidth = canvas.getScene().getWidth() - (isMenuOpen ? 0 : menuWidth);
+        double newHeight = canvas.getScene().getHeight();
 
-        updateMenuPosition();
-    }
-
-    private void updateMenuPosition() {
-        if (!isMenuOpen) {
-            sideMenu.setTranslateX(menuWidth);
-        } else {
-            sideMenu.setTranslateX(0);
+        if (newWidth > 0 && newHeight > 0) {
+            canvas.setWidth(newWidth);
+            canvas.setHeight(newHeight);
+            drawGrid(canvas.getGraphicsContext2D());
         }
     }
 
@@ -96,6 +92,7 @@ public class AppController {
         TranslateTransition transition = new TranslateTransition(Duration.millis(300), sideMenu);
         transition.setToX(targetX);
         transition.play();
+        updateCanvasSize();
         isMenuOpen = !isMenuOpen;
     }
 

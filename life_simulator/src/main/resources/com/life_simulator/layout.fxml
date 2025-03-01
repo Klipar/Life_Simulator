@@ -9,10 +9,16 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.life_simulator.controllers.AppController">
 
-    <Canvas fx:id="canvas" width="820" height="600"/>
+    <Canvas fx:id="canvas"
+            AnchorPane.topAnchor="0"
+            AnchorPane.bottomAnchor="0"
+            AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="200"/>
 
-    <VBox fx:id="sideMenu" prefWidth="200" prefHeight="600"
+    <VBox fx:id="sideMenu" prefWidth="200"
           style="-fx-background-color: #2C3E50;"
+          AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
           AnchorPane.rightAnchor="0">
         <Button text="example_1" />
         <Button text="example_2" />
