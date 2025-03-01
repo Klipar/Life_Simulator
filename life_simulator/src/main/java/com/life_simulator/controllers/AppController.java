@@ -11,6 +11,17 @@ import javafx.scene.paint.Color;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
+import com.life_simulator.simulation_realization.Cell;
+import com.life_simulator.simulation_realization.World;
+
+// import javafx.animation.KeyFrame;
+// import javafx.animation.Timeline;
+
+// import java.util.ArrayList;
+// import java.util.List;
+// import java.util.Random;
+
+
 
 public class AppController {
     @FXML private Canvas canvas;
@@ -26,8 +37,10 @@ public class AppController {
     private double mouseAnchorX, mouseAnchorY;
     private double initialOffsetX, initialOffsetY;
     private double CELL_SIZE = 20;
+
     private final int CELLS_IN_WIDTH = 50;
     private final int CELLS_IN_HEIGHT = 30;
+    World world = new World(CELLS_IN_WIDTH, CELLS_IN_HEIGHT, false, false);
 
     @SuppressWarnings("unused")
     @FXML
@@ -44,8 +57,8 @@ public class AppController {
             }
         });
 
-        canvas.widthProperty().addListener(evt -> drawGrid(gc));
-        canvas.heightProperty().addListener(evt -> drawGrid(gc));
+        canvas.widthProperty().addListener(evt -> UpdateCanvas(gc));
+        canvas.heightProperty().addListener(evt -> UpdateCanvas(gc));
 
         canvas.setOnScroll(this::handleZoom);
         canvas.setOnMousePressed(e -> {
@@ -61,7 +74,7 @@ public class AppController {
             if (e.isMiddleButtonDown()) {
                 offsetX = initialOffsetX + (e.getX() - mouseAnchorX);
                 offsetY = initialOffsetY + (e.getY() - mouseAnchorY);
-                drawGrid(gc);
+                UpdateCanvas(gc);
             }
         });
 
@@ -71,13 +84,17 @@ public class AppController {
                 double worldY = (e.getY() - offsetY) / scale;
                 int cellX = (int)(worldX / CELL_SIZE);
                 int cellY = (int)(worldY / CELL_SIZE);
-                if (cellX > (CELLS_IN_WIDTH-1) || cellX < 0 || worldX < 0) cellX = -1;
-                if (cellY > (CELLS_IN_HEIGHT-1) || cellY < 0 || worldY < 0) cellY = -1;
+                if (cellX > (world.getX() - 1) || cellX < 0 || worldX < 0) cellX = -1;
+                if (cellY > (world.getY() - 1) || cellY < 0 || worldY < 0) cellY = -1;
                 System.out.println("Cell: (" + cellX + ", " + cellY + ")");
+
+
+                if (!world.DeleteCell(world.getCell(cellX, cellY))) world.AddCell(new Cell(cellX, cellY));
+                UpdateCanvas(gc);
             }
         });
-
-        drawGrid(gc);
+        world.AddCell(new Cell(10, 10));
+        UpdateCanvas(gc);
     }
 
     @FXML
@@ -86,17 +103,17 @@ public class AppController {
 
         double sceneWidth = canvas.getScene().getWidth();
         double sceneHeight = canvas.getScene().getHeight();
-        double newCellSizeX = sceneWidth / CELLS_IN_WIDTH;
-        double newCellSizeY = sceneHeight / CELLS_IN_HEIGHT;
+        double newCellSizeX = sceneWidth / world.getX();
+        double newCellSizeY = sceneHeight / world.getY();
 
 
         CELL_SIZE = (newCellSizeX < newCellSizeY ? newCellSizeY : newCellSizeX);
 
         if (CELL_SIZE < 1) CELL_SIZE = 20;
 
-        canvas.setWidth(CELLS_IN_WIDTH * CELL_SIZE);
-        canvas.setHeight(CELLS_IN_HEIGHT * CELL_SIZE);
-        drawGrid(canvas.getGraphicsContext2D());
+        canvas.setWidth(world.getX() * CELL_SIZE);
+        canvas.setHeight(world.getY() * CELL_SIZE);
+        UpdateCanvas(canvas.getGraphicsContext2D());
     }
 
     private void toggleMenu() {
@@ -121,24 +138,52 @@ public class AppController {
         offsetX = mouseX - (mouseX - offsetX) * (scale / oldScale);
         offsetY = mouseY - (mouseY - offsetY) * (scale / oldScale);
 
-        drawGrid(canvas.getGraphicsContext2D());
+        UpdateCanvas(canvas.getGraphicsContext2D());
+    }
+
+    public void UpdateCanvas (GraphicsContext gc){
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        FillBackgroundCanvas(gc);
+        drawGrid(gc);
+        drawCells(gc);
+    }
+
+    private void FillBackgroundCanvas(GraphicsContext gc) {
+        gc.save();
+        gc.setFill(world.getBackgroundColor());
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.restore();
     }
 
     private void drawGrid(GraphicsContext gc) {
         double width = canvas.getWidth();
         double height = canvas.getHeight();
 
-        gc.clearRect(0, 0, width, height);
+        gc.save();
+        gc.translate(offsetX, offsetY);
+        gc.scale(scale, scale);
+        gc.setStroke(world.getGridColor());
+        for (double x = 0; x <= width; x += CELL_SIZE)
+            gc.strokeLine(x, 0, x, height);
+
+        for (double y = 0; y <= height; y += CELL_SIZE)
+            gc.strokeLine(0, y, width, y);
+
+        gc.restore();
+    }
+
+    private void drawCells(GraphicsContext gc) {
         gc.save();
         gc.translate(offsetX, offsetY);
         gc.scale(scale, scale);
 
-        gc.setStroke(Color.LIGHTGRAY);
-        for (double x = 0; x <= width; x += CELL_SIZE) {
-            gc.strokeLine(x, 0, x, height);
-        }
-        for (double y = 0; y <= height; y += CELL_SIZE) {
-            gc.strokeLine(0, y, width, y);
+        for (int x = 0; x < world.getX(); x++) {
+            for (int y = 0; y < world.getY(); y++) {
+                if (world.getCell(x, y) != null) {
+                    gc.setFill(world.getCell(x, y).getColor());
+                    gc.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                }
+            }
         }
         gc.restore();
     }
