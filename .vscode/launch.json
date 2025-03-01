@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "request": "launch",
+            "name": "Run Life Simulator",
+            "mainClass": "com.life_simulator.App",
+            "vmArgs": "--module-path /home/fox/.m2/repository/org/openjfx/javafx-controls/23.0.1/javafx-controls-23.0.1.jar:/home/fox/.m2/repository/org/openjfx/javafx-controls/23.0.1/javafx-controls-23.0.1-linux.jar:/home/fox/.m2/repository/org/openjfx/javafx-graphics/23.0.1/javafx-graphics-23.0.1.jar:/home/fox/.m2/repository/org/openjfx/javafx-graphics/23.0.1/javafx-graphics-23.0.1-linux.jar:/home/fox/.m2/repository/org/openjfx/javafx-base/23.0.1/javafx-base-23.0.1.jar:/home/fox/.m2/repository/org/openjfx/javafx-base/23.0.1/javafx-base-23.0.1-linux.jar:/home/fox/.m2/repository/org/openjfx/javafx-fxml/23.0.1/javafx-fxml-23.0.1.jar:/home/fox/.m2/repository/org/openjfx/javafx-fxml/23.0.1/javafx-fxml-23.0.1-linux.jar --add-modules javafx.controls,javafx.fxml",
+            "projectName": "life_simulator"
+        }
+    ]
+}
