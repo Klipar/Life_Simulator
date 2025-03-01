@@ -3,12 +3,25 @@ package com.life_simulator.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
+
 
 public class AppController {
     @FXML private Canvas canvas;
+    @FXML private VBox sideMenu;
+    @FXML private Button toggleMenuButton;
+
+    private boolean isMenuOpen = true;
+    private double menuWidth = 200;
+    @SuppressWarnings("unused")
+    private double stageWidth;
 
     private double scale = 1.0;
     private double offsetX = 0;
@@ -21,6 +34,9 @@ public class AppController {
     @FXML
     public void initialize() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // sideMenu.setLayoutX(CANVAS_WIDTH);
+        toggleMenuButton.setOnAction(e -> toggleMenu());
 
         canvas.widthProperty().addListener(evt -> drawGrid(gc));
         canvas.heightProperty().addListener(evt -> drawGrid(gc));
@@ -54,6 +70,33 @@ public class AppController {
         });
 
         drawGrid(gc);
+    }
+
+    @SuppressWarnings("unused")
+    public void setStage(Stage stage) {
+        stageWidth = stage.getWidth();
+        stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+            stageWidth = newVal.doubleValue();
+            updateMenuPosition();
+        });
+
+        updateMenuPosition();
+    }
+
+    private void updateMenuPosition() {
+        if (!isMenuOpen) {
+            sideMenu.setTranslateX(menuWidth);
+        } else {
+            sideMenu.setTranslateX(0);
+        }
+    }
+
+    private void toggleMenu() {
+        double targetX = isMenuOpen ? menuWidth : 0;
+        TranslateTransition transition = new TranslateTransition(Duration.millis(300), sideMenu);
+        transition.setToX(targetX);
+        transition.play();
+        isMenuOpen = !isMenuOpen;
     }
 
     private void handleZoom(ScrollEvent event) {
