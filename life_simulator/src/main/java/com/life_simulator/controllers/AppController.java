@@ -69,6 +69,8 @@ public class AppController {
                 double worldY = (e.getY() - offsetY) / scale;
                 int cellX = (int)(worldX / CELL_SIZE);
                 int cellY = (int)(worldY / CELL_SIZE);
+                if (cellX > (CELLS_IN_WIDTH-1) || cellX < 0) cellX = -1;
+                if (cellY > (CELLS_IN_HEIGHT-1) || cellY < 0) cellY = -1;
                 System.out.println("Cell: (" + cellX + ", " + cellY + ")");
             }
         });
