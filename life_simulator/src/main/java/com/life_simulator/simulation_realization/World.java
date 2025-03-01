@@ -17,6 +17,21 @@ public class World  extends Base{
         this.XCycle = XCycle;
         this.YCycle = YCycle;
     }
+    public boolean isXCycle() {
+        return XCycle;
+    }
+
+    public void setXCycle(boolean xCycle) {
+        XCycle = xCycle;
+    }
+
+    public boolean isYCycle() {
+        return YCycle;
+    }
+
+    public void setYCycle(boolean yCycle) {
+        YCycle = yCycle;
+    }
 
     public boolean act(){
         System.out.println("call World.act");

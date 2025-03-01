@@ -7,19 +7,11 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
 import com.life_simulator.simulation_realization.Cell;
 import com.life_simulator.simulation_realization.World;
-
-// import javafx.animation.KeyFrame;
-// import javafx.animation.Timeline;
-
-// import java.util.ArrayList;
-// import java.util.List;
-// import java.util.Random;
 
 
 
