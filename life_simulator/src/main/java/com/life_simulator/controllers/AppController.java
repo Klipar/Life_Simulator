@@ -86,7 +86,6 @@ public class AppController {
 
         double sceneWidth = canvas.getScene().getWidth();
         double sceneHeight = canvas.getScene().getHeight();
-        System.out.println(sceneWidth + ":" + sceneHeight);
         double newCellSizeX = sceneWidth / CELLS_IN_WIDTH;
         double newCellSizeY = sceneHeight / CELLS_IN_HEIGHT;
 
