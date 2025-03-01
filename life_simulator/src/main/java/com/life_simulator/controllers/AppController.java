@@ -80,15 +80,24 @@ public class AppController {
         drawGrid(gc);
     }
 
+    @FXML
     private void updateCanvasSize() {
-        double newWidth = canvas.getScene().getWidth() - (isMenuOpen ? 0 : menuWidth);
-        double newHeight = canvas.getScene().getHeight();
+        if (canvas.getScene() == null) return;
 
-        if (newWidth > 0 && newHeight > 0) {
-            canvas.setWidth(newWidth);
-            canvas.setHeight(newHeight);
-            drawGrid(canvas.getGraphicsContext2D());
-        }
+        double sceneWidth = canvas.getScene().getWidth();
+        double sceneHeight = canvas.getScene().getHeight();
+        System.out.println(sceneWidth + ":" + sceneHeight);
+        double newCellSizeX = sceneWidth / CELLS_IN_WIDTH;
+        double newCellSizeY = sceneHeight / CELLS_IN_HEIGHT;
+
+
+        CELL_SIZE = (newCellSizeX < newCellSizeY ? newCellSizeY : newCellSizeX);
+
+        if (CELL_SIZE < 1) CELL_SIZE = 20;
+
+        canvas.setWidth(CELLS_IN_WIDTH * CELL_SIZE);
+        canvas.setHeight(CELLS_IN_HEIGHT * CELL_SIZE);
+        drawGrid(canvas.getGraphicsContext2D());
     }
 
     private void toggleMenu() {

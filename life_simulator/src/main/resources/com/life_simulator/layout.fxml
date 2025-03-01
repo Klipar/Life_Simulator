@@ -13,7 +13,7 @@
             AnchorPane.topAnchor="0"
             AnchorPane.bottomAnchor="0"
             AnchorPane.leftAnchor="0"
-            AnchorPane.rightAnchor="200"/>
+            AnchorPane.rightAnchor="0"/>
 
     <VBox fx:id="sideMenu" prefWidth="200"
           style="-fx-background-color: #2C3E50;"
