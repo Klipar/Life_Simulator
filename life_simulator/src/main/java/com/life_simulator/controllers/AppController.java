@@ -12,6 +12,7 @@ import javafx.util.Duration;
 
 import com.life_simulator.simulation_realization.Cell;
 import com.life_simulator.simulation_realization.World;
+import com.life_simulator.simulation_realization.Base;
 
 
 
@@ -32,7 +33,7 @@ public class AppController {
 
     private final int CELLS_IN_WIDTH = 50;
     private final int CELLS_IN_HEIGHT = 30;
-    World world = new World(CELLS_IN_WIDTH, CELLS_IN_HEIGHT, false, false);
+    World world = new World(new Base(CELLS_IN_WIDTH, CELLS_IN_HEIGHT), false, false);
 
     @SuppressWarnings("unused")
     @FXML
@@ -74,18 +75,15 @@ public class AppController {
             if (e.getButton() == MouseButton.PRIMARY) {
                 double worldX = (e.getX() - offsetX) / scale;
                 double worldY = (e.getY() - offsetY) / scale;
-                int cellX = (int)(worldX / CELL_SIZE);
-                int cellY = (int)(worldY / CELL_SIZE);
-                if (cellX > (world.getX() - 1) || cellX < 0 || worldX < 0) cellX = -1;
-                if (cellY > (world.getY() - 1) || cellY < 0 || worldY < 0) cellY = -1;
-                System.out.println("Cell: (" + cellX + ", " + cellY + ")");
+                Base base = new Base ((int)(worldX / CELL_SIZE), (int)(worldY / CELL_SIZE));
+                if (base.getX() > (world.getX() - 1) || base.getX() < 0 || worldX < 0) base.setX(-1);
+                if (base.getY() > (world.getY() - 1) || base.getY() < 0 || worldY < 0) base.setY(-1);
+                System.out.println("Cell: (" + base.getX() + ", " + base.getY() + ")");
 
-
-                if (!world.DeleteCell(world.getCell(cellX, cellY))) world.AddCell(new Cell(cellX, cellY));
+                if (!world.DeleteCell(world.getCell(base))) world.AddCell(new Cell(base));
                 UpdateCanvas(gc);
             }
         });
-        world.AddCell(new Cell(10, 10));
         UpdateCanvas(gc);
     }
 
@@ -168,14 +166,18 @@ public class AppController {
         gc.save();
         gc.translate(offsetX, offsetY);
         gc.scale(scale, scale);
+        Base base = new Base(0,0);
 
-        for (int x = 0; x < world.getX(); x++) {
-            for (int y = 0; y < world.getY(); y++) {
-                if (world.getCell(x, y) != null) {
-                    gc.setFill(world.getCell(x, y).getColor());
-                    gc.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        while (base.getX() < world.getX()){
+            while(base.getY() < world.getY()){
+                if (world.getCell(base) != null) {
+                    gc.setFill(world.getCell(base).getColor());
+                    gc.fillRect(base.getX() * CELL_SIZE, base.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                 }
+                base.setY(base.getY()+1);
             }
+            base.setY(0);
+            base.setX(base.getX()+1);
         }
         gc.restore();
     }

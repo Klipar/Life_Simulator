@@ -6,11 +6,11 @@ public class Cell extends Base {
     private Color color = Color.ORANGE;
     private int type = 0;
 
-    public Cell(int X, int Y){
-        super(X, Y);
+    public Cell(Base base){
+        super(base.getX(), base.getY());
     }
 
-    public boolean act() {
+    public boolean act(World world) {
         System.out.println("call Cell.act");
         return true;
     }

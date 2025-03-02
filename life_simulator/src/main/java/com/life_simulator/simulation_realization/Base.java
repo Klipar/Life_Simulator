@@ -1,6 +1,6 @@
 package com.life_simulator.simulation_realization;
 
-abstract public class Base {
+public class Base {
     private int X;
     private int Y;
 
@@ -24,6 +24,4 @@ abstract public class Base {
     public void setX(int X) {
         this.X = X;
     }
-
-    abstract public boolean act();
 }

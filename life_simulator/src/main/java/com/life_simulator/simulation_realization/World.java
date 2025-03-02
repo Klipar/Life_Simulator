@@ -1,19 +1,19 @@
 package com.life_simulator.simulation_realization;
 import javafx.scene.paint.Color;
 
-public class World  extends Base{
+public class World extends Base{
     private Cell[][] world;
 
-    private Color backgroundColor = Color.rgb(16, 2, 49);
+    private Color backgroundColor = Color.rgb(255, 255, 255);
     private Color gridColor = Color.LIGHTGRAY;
 
     //does the world loop along one of its axes?
     private boolean XCycle;
     private boolean YCycle;
 
-    public World(int X, int Y, boolean XCycle, boolean YCycle){
-        super(X, Y);
-        this.world = new Cell[X][Y]; // creating an array of a certain size
+    public World(Base base, boolean XCycle, boolean YCycle){
+        super(base.getX(), base.getY());
+        this.world = new Cell[base.getX()][base.getY()]; // creating an array of a certain size
         this.XCycle = XCycle;
         this.YCycle = YCycle;
     }
@@ -62,8 +62,8 @@ public class World  extends Base{
         return AddCell(cell);
     }
 
-    public Cell getCell(int X, int Y){
-        return world[X][Y];
+    public Cell getCell(Base base){
+        return world[base.getX()][base.getY()];
     }
 
     public Cell[][] getWorld() {
