@@ -2,7 +2,7 @@ package com.life_simulator.simulation_realization;
 import javafx.scene.paint.Color;
 
 public class World extends Base{
-    private Cell[][] world;
+    private GridElement[][] world;
 
     private Color backgroundColor = Color.rgb(255, 255, 255);
     private Color gridColor = Color.LIGHTGRAY;
@@ -13,10 +13,20 @@ public class World extends Base{
 
     public World(Base base, boolean XCycle, boolean YCycle){
         super(base.getX(), base.getY());
-        this.world = new Cell[base.getX()][base.getY()]; // creating an array of a certain size
+        this.world = new GridElement[base.getX()][base.getY()]; // creating an array of a certain size
+
+        while (base.getX() > 0){
+            while(base.getY() > 0){
+                this.world[base.getX()-1][base.getY()-1] = new GridElement(base);
+                base.setY(base.getY()-1);
+            }
+            base.setY(this.getY());
+            base.setX(base.getX()-1);
+        }
         this.XCycle = XCycle;
         this.YCycle = YCycle;
     }
+
     public boolean isXCycle() {
         return XCycle;
     }
@@ -33,22 +43,25 @@ public class World extends Base{
         YCycle = yCycle;
     }
 
-    public boolean act(){
-        System.out.println("call World.act");
-        return true;
+    public boolean act(Base base){
+        return world[base.getX()][base.getY()].act(this);
     }
 
     public boolean AddCell (Cell cell){
-        if (cell == null) return false;
-        if (world[cell.getX()][cell.getY()] != null) return false;
-        world[cell.getX()][cell.getY()] = cell;
+        if (cell == null || world[cell.getX()][cell.getY()].getCell() != null) return false;
+        world[cell.getX()][cell.getY()].AddCell(cell);
         return true;
     }
 
     public boolean DeleteCell (Cell cell){
-        if (cell == null) return false;
-        if (world[cell.getX()][cell.getY()] == null) return false;
-        world[cell.getX()][cell.getY()] = null;
+        if (cell == null || world[cell.getX()][cell.getY()].getCell() == null) return false;
+        world[cell.getX()][cell.getY()].DeleteCell();
+        return true;
+    }
+
+    public boolean DeleteCell (Base base){
+        if (base == null || world[base.getX()][base.getY()].getCell() == null) return false;
+        world[base.getX()][base.getY()].DeleteCell();
         return true;
     }
 
@@ -63,10 +76,10 @@ public class World extends Base{
     }
 
     public Cell getCell(Base base){
-        return world[base.getX()][base.getY()];
+        return world[base.getX()][base.getY()].getCell();
     }
 
-    public Cell[][] getWorld() {
+    public GridElement[][] getWorld() {
         return world;
     }
 

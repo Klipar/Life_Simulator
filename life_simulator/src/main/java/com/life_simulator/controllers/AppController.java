@@ -100,7 +100,20 @@ public class AppController {
                 try {
                     timestamp = System.currentTimeMillis();
                     if (running.get()){
-                        System.out.println("alter thread...");
+                        Base base = new Base(0,0);
+
+                        while (base.getX() < world.getX()){
+                            while(base.getY() < world.getY()){
+                                System.out.println(base);
+                                if (world.getCell(base) != null) {
+                                    // System.out.println("==>" + base);
+                                    world.act(base);
+                                }
+                                base.setY(base.getY()+1);
+                            }
+                            base.setY(0);
+                            base.setX(base.getX()+1);
+                        }
                     }
                     long tmp = fps_lock - (System.currentTimeMillis() - timestamp);
                     if (tmp > 0) Thread.sleep(tmp); //fps lock;

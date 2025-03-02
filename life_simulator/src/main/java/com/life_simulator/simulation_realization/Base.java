@@ -24,4 +24,10 @@ public class Base {
     public void setX(int X) {
         this.X = X;
     }
+
+    @Override
+    public String toString() {
+        return "(" + X + ", " + Y + ")";
+    }
+
 }
