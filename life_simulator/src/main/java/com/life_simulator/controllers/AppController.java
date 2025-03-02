@@ -104,7 +104,7 @@ public class AppController {
 
                         while (base.getX() < world.getX()){
                             while(base.getY() < world.getY()){
-                                System.out.println(base);
+                                // System.out.println(base);
                                 if (world.getCell(base) != null) {
                                     // System.out.println("==>" + base);
                                     world.act(base);
@@ -114,6 +114,7 @@ public class AppController {
                             base.setY(0);
                             base.setX(base.getX()+1);
                         }
+                        UpdateCanvas(gc);
                     }
                     long tmp = fps_lock - (System.currentTimeMillis() - timestamp);
                     if (tmp > 0) Thread.sleep(tmp); //fps lock;
