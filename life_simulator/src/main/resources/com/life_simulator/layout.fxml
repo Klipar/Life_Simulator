@@ -27,4 +27,9 @@
     <Button fx:id="toggleMenuButton" text="☰"
             AnchorPane.rightAnchor="10"
             AnchorPane.topAnchor="10"/>
+
+        <Button fx:id="StartStopSimulation" text="Stop"
+            onAction="#StartStopSimulation"
+            AnchorPane.rightAnchor="50"
+            AnchorPane.topAnchor="10"/>
 </AnchorPane>

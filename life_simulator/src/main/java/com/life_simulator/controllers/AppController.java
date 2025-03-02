@@ -8,6 +8,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
 
 import com.life_simulator.simulation_realization.Cell;
@@ -20,7 +22,9 @@ public class AppController {
     @FXML private Canvas canvas;
     @FXML private VBox sideMenu;
     @FXML private Button toggleMenuButton;
+    @FXML private Button StartStopSimulation;
 
+    private final BooleanProperty running = new SimpleBooleanProperty(false);
     private boolean isMenuOpen = true;
     private double menuWidth = 200;
 
@@ -71,6 +75,8 @@ public class AppController {
             }
         });
 
+        StartStopSimulation.textProperty().bind(running.map(r -> r ? "Stop" : "Start"));
+
         canvas.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 double worldX = (e.getX() - offsetX) / scale;
@@ -85,6 +91,28 @@ public class AppController {
             }
         });
         UpdateCanvas(gc);
+
+        Thread gameLoop = new Thread(() -> {
+            while (true) {
+                try {
+                    while (running.get()){
+                        System.out.println("alter thread...");
+                        Thread.sleep(100); //tmp
+                    }
+                    Thread.sleep(100); //fps correction
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        });
+
+        gameLoop.setDaemon(true);
+        gameLoop.start();
+    }
+
+    @FXML
+    private void StartStopSimulation() {
+        running.set(!running.get());
     }
 
     @FXML
