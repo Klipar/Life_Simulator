@@ -28,6 +28,8 @@ public class AppController {
     private boolean isMenuOpen = true;
     private double menuWidth = 200;
 
+    private int fps_lock = 1000/30; //30 fps lock
+
     private double scale = 1.0;
     private double offsetX = 0;
     private double offsetY = 0;
@@ -93,13 +95,15 @@ public class AppController {
         UpdateCanvas(gc);
 
         Thread gameLoop = new Thread(() -> {
+            long timestamp = 0;
             while (true) {
                 try {
-                    while (running.get()){
+                    timestamp = System.currentTimeMillis();
+                    if (running.get()){
                         System.out.println("alter thread...");
-                        Thread.sleep(100); //tmp
                     }
-                    Thread.sleep(100); //fps correction
+                    long tmp = fps_lock - (System.currentTimeMillis() - timestamp);
+                    if (tmp > 0) Thread.sleep(tmp); //fps lock;
                 } catch (InterruptedException e) {
                     break;
                 }
