@@ -6,7 +6,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -21,8 +23,12 @@ import com.life_simulator.simulation_realization.Base;
 public class AppController {
     @FXML private Canvas canvas;
     @FXML private VBox sideMenu;
-    @FXML private Button toggleMenuButton;
+    @FXML private Button toggleRightMenuButton;
     @FXML private Button StartStopSimulation;
+    @FXML private Rectangle RightMenuHitbox;
+    @FXML private AnchorPane rootPane;
+    private final double HIDE_OFFSET = 50;
+    private boolean isHidden = false;
 
     private final BooleanProperty running = new SimpleBooleanProperty(false);
     private boolean isMenuOpen = true;
@@ -46,7 +52,7 @@ public class AppController {
     public void initialize() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        toggleMenuButton.setOnAction(e -> toggleMenu());
+        toggleRightMenuButton.setOnAction(e -> toggleMenu());
 
         canvas.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
@@ -124,6 +130,10 @@ public class AppController {
             }
         });
 
+        hideRightButton();
+        toggleMenu();
+
+
         gameLoop.setDaemon(true);
         gameLoop.start();
     }
@@ -175,6 +185,26 @@ public class AppController {
         offsetY = mouseY - (mouseY - offsetY) * (scale / oldScale);
 
         UpdateCanvas(canvas.getGraphicsContext2D());
+    }
+
+    @FXML
+    private void showRightButton() {
+        if (!isHidden) return;
+        animateButton(0);
+        isHidden = false;
+    }
+
+    @FXML
+    private void hideRightButton() {
+        if (isHidden) return;
+        animateButton(HIDE_OFFSET);
+        isHidden = true;
+    }
+
+    private void animateButton(double offset) {
+        TranslateTransition transition = new TranslateTransition(Duration.millis(150), toggleRightMenuButton);
+        transition.setToX(offset);
+        transition.play();
     }
 
     public void UpdateCanvas (GraphicsContext gc){
