@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -11,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
@@ -29,6 +31,7 @@ public class AppController {
     @FXML private Rectangle RightMenuHitbox;
     @FXML private AnchorPane rootPane;
     @FXML private StackPane controlPanel;
+    @FXML private TextField inputField;
 
     private final double HIDE_OFFSET = 50;
     private boolean isHidden = false;
@@ -40,7 +43,7 @@ public class AppController {
     private double menuWidth = 200;
 
     private int fps_lock = 1000/30; //30 fps lock
-
+    private int numberOfIterations = -1; //if -1 = ∞
     private double scale = 1.0;
     private double offsetX = 0;
     private double offsetY = 0;
@@ -105,12 +108,28 @@ public class AppController {
         });
         UpdateCanvas(gc);
 
+        inputField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                inputField.setText(oldValue);
+            }
+        });
+
         Thread gameLoop = new Thread(() -> {
             long timestamp = 0;
             while (true) {
                 try {
                     timestamp = System.currentTimeMillis();
                     if (running.get()){
+                        if (numberOfIterations == 0){
+                            Platform.runLater(() -> {
+                                running.set(false);
+                            });
+                        } else if (numberOfIterations > 0){
+                            numberOfIterations--;
+                            Platform.runLater(() -> {
+                                inputField.setText(String.valueOf(numberOfIterations));
+                            });
+                        }
                         Base base = new Base(0,0);
 
                         while (base.getX() < world.getX()){
@@ -147,6 +166,13 @@ public class AppController {
 
     @FXML
     private void StartStopSimulation() {
+        String inputText = inputField.getText();
+        if (inputText == ""){
+            numberOfIterations = -1;
+            inputField.setText("∞");
+        } else {
+            numberOfIterations = Integer.parseInt(inputText);
+        }
         running.set(!running.get());
     }
 

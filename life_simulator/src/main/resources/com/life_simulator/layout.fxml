@@ -49,7 +49,7 @@
                pickOnBounds="false">
 
                 <Rectangle fx:id="TopMenuHitbox"
-                        width="300"
+                        width="240"
                         height="50"
                         AnchorPane.leftAnchor="0"
                         AnchorPane.topAnchor="0"
@@ -65,9 +65,7 @@
                         <HBox fx:id="controlBox" spacing="10" alignment="CENTER" maxWidth="300">
                                 <Button fx:id="StartStopSimulation" text="Stop"
                                         onAction="#StartStopSimulation"/>
-                                <Button fx:id="AdditionalButton" text="Reset"
-                                        onAction="#StartStopSimulation"/>
-                                <TextField fx:id="inputField" promptText="Enter value"/>
+                                <TextField fx:id="inputField" promptText="Iterations number = ∞"/>
                         </HBox>
                 </StackPane>
         </StackPane>
