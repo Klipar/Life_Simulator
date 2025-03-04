@@ -19,7 +19,7 @@
                 AnchorPane.leftAnchor="0"
                 AnchorPane.rightAnchor="0"/>
 
-        <VBox fx:id="sideMenu" prefWidth="200"
+        <VBox fx:id="rightSideMenu" prefWidth="200"
                 style="-fx-background-color: #2C3E50;"
                 AnchorPane.topAnchor="0"
                 AnchorPane.bottomAnchor="0"
@@ -42,6 +42,32 @@
                 AnchorPane.topAnchor="10"
                 onMouseEntered="#showRightButton"
                 onMouseExited="#hideRightButton"/>
+
+
+        <VBox fx:id="leftSideMenu" prefWidth="200"
+                style="-fx-background-color: #2C3E50;"
+                AnchorPane.topAnchor="0"
+                AnchorPane.bottomAnchor="0"
+                AnchorPane.leftAnchor="0">
+
+                <Button text="example_1" />
+                <Button text="example_2"/>
+        </VBox>
+
+        <Rectangle fx:id="leftMenuHitbox"
+               width="40"
+               height="35"
+               AnchorPane.leftAnchor="0"
+               AnchorPane.topAnchor="0"
+               fill="transparent"
+               onMouseEntered="#showLeftButton"/>
+
+        <Button fx:id="toggleLeftMenuButton" text="☰"
+                AnchorPane.leftAnchor="10"
+                AnchorPane.topAnchor="10"
+                onMouseEntered="#showLeftButton"
+                onMouseExited="#hideLeftButton"/>
+
 
         <StackPane AnchorPane.leftAnchor="0"
                AnchorPane.rightAnchor="0"

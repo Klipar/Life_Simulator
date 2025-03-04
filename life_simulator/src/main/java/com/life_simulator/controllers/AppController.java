@@ -25,22 +25,30 @@ import com.life_simulator.simulation_realization.Base;
 
 public class AppController {
     @FXML private Canvas canvas;
-    @FXML private VBox sideMenu;
+    @FXML private VBox rightSideMenu;
     @FXML private Button toggleRightMenuButton;
-    @FXML private Button StartStopSimulation;
     @FXML private Rectangle RightMenuHitbox;
+    @FXML private Button StartStopSimulation;
     @FXML private AnchorPane rootPane;
     @FXML private StackPane controlPanel;
     @FXML private TextField inputField;
 
+    @FXML private VBox leftSideMenu;
+    @FXML private Button toggleLeftMenuButton;
+    @FXML private Rectangle leftMenuHitbox;
+
     private final double HIDE_OFFSET = 50;
-    private boolean isHidden = false;
+    private final double HIDE_OFFSET_Left_MenuButton = -50;
+    private boolean isHiddenRightMenuButton = false;
+    private boolean isHiddenLeftMenuButton = false;
     private final BooleanProperty running = new SimpleBooleanProperty(false);
     private boolean isControlPanelHidden = false;
     private static final double HIDE_OFFSET_TOP_MENU = -60;
 
-    private boolean isMenuOpen = true;
-    private double menuWidth = 200;
+    private boolean isRightMenuOpen = true;
+    private boolean isLeftMenuOpen = true;
+    private double LeftMenuWidth = 200;
+    private double RightMenuWidth = 200;
 
     private int fps_lock = 1000/30; //30 fps lock
     private int numberOfIterations = -1; //if -1 = ∞
@@ -60,7 +68,8 @@ public class AppController {
     public void initialize() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        toggleRightMenuButton.setOnAction(e -> toggleMenu());
+        toggleRightMenuButton.setOnAction(e -> toggleRightMenu());
+        toggleLeftMenuButton.setOnAction(e -> toggleLeftMenu());
 
         canvas.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
@@ -124,6 +133,7 @@ public class AppController {
                             Platform.runLater(() -> {
                                 running.set(false);
                             });
+                            continue;
                         } else if (numberOfIterations > 0){
                             numberOfIterations--;
                             Platform.runLater(() -> {
@@ -155,7 +165,9 @@ public class AppController {
         });
 
         hideRightButton();
-        toggleMenu();
+        hideLeftButton();
+        toggleRightMenu();
+        toggleLeftMenu();
 
     controlPanel.setTranslateY(HIDE_OFFSET_TOP_MENU);
     isControlPanelHidden = true;
@@ -195,13 +207,22 @@ public class AppController {
         UpdateCanvas(canvas.getGraphicsContext2D());
     }
 
-    private void toggleMenu() {
-        double targetX = isMenuOpen ? menuWidth : 0;
-        TranslateTransition transition = new TranslateTransition(Duration.millis(300), sideMenu);
+    private void toggleRightMenu() {
+        double targetX = isRightMenuOpen ? RightMenuWidth : 0;
+        TranslateTransition transition = new TranslateTransition(Duration.millis(300), rightSideMenu);
         transition.setToX(targetX);
         transition.play();
         updateCanvasSize();
-        isMenuOpen = !isMenuOpen;
+        isRightMenuOpen = !isRightMenuOpen;
+    }
+
+    private void toggleLeftMenu() {
+        double targetX = isLeftMenuOpen ? -LeftMenuWidth : 0;
+        TranslateTransition transition = new TranslateTransition(Duration.millis(300), leftSideMenu);
+        transition.setToX(targetX);
+        transition.play();
+        updateCanvasSize();
+        isLeftMenuOpen = !isLeftMenuOpen;
     }
 
     private void handleZoom(ScrollEvent event) {
@@ -222,16 +243,16 @@ public class AppController {
 
     @FXML
     private void showRightButton() {
-        if (!isHidden) return;
+        if (!isHiddenRightMenuButton) return;
         animateButton(0);
-        isHidden = false;
+        isHiddenRightMenuButton = false;
     }
 
     @FXML
     private void hideRightButton() {
-        if (isHidden) return;
+        if (isHiddenRightMenuButton) return;
         animateButton(HIDE_OFFSET);
-        isHidden = true;
+        isHiddenRightMenuButton = true;
     }
 
     private void animateButton(double offset) {
@@ -239,6 +260,27 @@ public class AppController {
         transition.setToX(offset);
         transition.play();
     }
+
+    @FXML
+    private void showLeftButton() {
+        if (!isHiddenLeftMenuButton) return;
+        animateLeftButton(0);
+        isHiddenLeftMenuButton = false;
+    }
+
+    @FXML
+    private void hideLeftButton() {
+        if (isHiddenLeftMenuButton) return;
+        animateLeftButton(HIDE_OFFSET_Left_MenuButton);
+        isHiddenLeftMenuButton = true;
+    }
+
+    private void animateLeftButton(double offset) {
+        TranslateTransition transition = new TranslateTransition(Duration.millis(150), toggleLeftMenuButton);
+        transition.setToX(offset);
+        transition.play();
+    }
+
 
     @FXML
     private void showControlPanel() {
