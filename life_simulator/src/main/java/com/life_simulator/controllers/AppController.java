@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.animation.TranslateTransition;
@@ -27,10 +28,14 @@ public class AppController {
     @FXML private Button StartStopSimulation;
     @FXML private Rectangle RightMenuHitbox;
     @FXML private AnchorPane rootPane;
+    @FXML private StackPane controlPanel;
+
     private final double HIDE_OFFSET = 50;
     private boolean isHidden = false;
-
     private final BooleanProperty running = new SimpleBooleanProperty(false);
+    private boolean isControlPanelHidden = false;
+    private static final double HIDE_OFFSET_TOP_MENU = -60;
+
     private boolean isMenuOpen = true;
     private double menuWidth = 200;
 
@@ -133,6 +138,8 @@ public class AppController {
         hideRightButton();
         toggleMenu();
 
+    controlPanel.setTranslateY(HIDE_OFFSET_TOP_MENU);
+    isControlPanelHidden = true;
 
         gameLoop.setDaemon(true);
         gameLoop.start();
@@ -206,6 +213,27 @@ public class AppController {
         transition.setToX(offset);
         transition.play();
     }
+
+    @FXML
+    private void showControlPanel() {
+        if (!isControlPanelHidden) return;
+        animateControlPanel(0);
+        isControlPanelHidden = false;
+    }
+
+    @FXML
+    private void hideControlPanel() {
+        if (isControlPanelHidden) return;
+        animateControlPanel(HIDE_OFFSET_TOP_MENU);
+        isControlPanelHidden = true;
+    }
+
+    private void animateControlPanel(double offsetY) {
+        TranslateTransition transition = new TranslateTransition(Duration.millis(150), controlPanel);
+        transition.setToY(offsetY);
+        transition.play();
+    }
+
 
     public void UpdateCanvas (GraphicsContext gc){
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

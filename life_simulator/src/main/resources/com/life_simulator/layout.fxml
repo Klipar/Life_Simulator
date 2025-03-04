@@ -43,19 +43,34 @@
                 onMouseEntered="#showRightButton"
                 onMouseExited="#hideRightButton"/>
 
-    <StackPane AnchorPane.leftAnchor="0"
+        <StackPane AnchorPane.leftAnchor="0"
                AnchorPane.rightAnchor="0"
-               AnchorPane.topAnchor="10"
+               AnchorPane.topAnchor="0"
                pickOnBounds="false">
 
-        <HBox fx:id="controlBox" spacing="10" alignment="CENTER" maxWidth="300">
-            <Button fx:id="StartStopSimulation" text="Stop"
-                    onAction="#StartStopSimulation"/>
-            <Button fx:id="AdditionalButton" text="Reset"
-                    onAction="#StartStopSimulation"/>
-            <TextField fx:id="inputField" promptText="Enter value"/>
-        </HBox>
-    </StackPane>
+                <Rectangle fx:id="TopMenuHitbox"
+                        width="300"
+                        height="50"
+                        AnchorPane.leftAnchor="0"
+                        AnchorPane.topAnchor="0"
+                        fill="transparent"
+                        onMouseEntered="#showControlPanel"/>
+                <StackPane fx:id="controlPanel"
+                        AnchorPane.leftAnchor="0"
+                        AnchorPane.rightAnchor="0"
+                        AnchorPane.topAnchor="0"
+                        pickOnBounds="false"
+                        onMouseExited="#hideControlPanel">
+
+                        <HBox fx:id="controlBox" spacing="10" alignment="CENTER" maxWidth="300">
+                                <Button fx:id="StartStopSimulation" text="Stop"
+                                        onAction="#StartStopSimulation"/>
+                                <Button fx:id="AdditionalButton" text="Reset"
+                                        onAction="#StartStopSimulation"/>
+                                <TextField fx:id="inputField" promptText="Enter value"/>
+                        </HBox>
+                </StackPane>
+        </StackPane>
 
 
 </AnchorPane>
