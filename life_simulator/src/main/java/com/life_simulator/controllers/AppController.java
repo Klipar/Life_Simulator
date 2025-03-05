@@ -61,6 +61,10 @@ public class AppController {
 
     private final int CELLS_IN_WIDTH = 50;
     private final int CELLS_IN_HEIGHT = 30;
+
+    private Base DraggsBuffer;
+    private boolean dragging = false;
+
     World world = new World(new Base(CELLS_IN_WIDTH, CELLS_IN_HEIGHT), false, false);
 
     @SuppressWarnings("unused")
@@ -93,16 +97,31 @@ public class AppController {
         });
 
         canvas.setOnMouseDragged(e -> {
+            this.dragging = true;
             if (e.isMiddleButtonDown()) {
                 offsetX = initialOffsetX + (e.getX() - mouseAnchorX);
                 offsetY = initialOffsetY + (e.getY() - mouseAnchorY);
                 UpdateCanvas(gc);
+            } else if (e.isPrimaryButtonDown()) { //e.isSecondaryButtonDown()
+                double worldX = (e.getX() - offsetX) / scale;
+                double worldY = (e.getY() - offsetY) / scale;
+                Base base = new Base ((int)(worldX / CELL_SIZE), (int)(worldY / CELL_SIZE));
+                if (base.getX() > (world.getX() - 1) || base.getX() < 0 || worldX < 0) base.setX(-1);
+                if (base.getY() > (world.getY() - 1) || base.getY() < 0 || worldY < 0) base.setY(-1);
+                if (!base.equals(DraggsBuffer)){
+                    DraggsBuffer = base;
+                    System.out.println("GridElement: " + base);
+                }
             }
         });
 
         StartStopSimulation.textProperty().bind(running.map(r -> r ? "Stop" : "Start"));
 
         canvas.setOnMouseClicked(e -> {
+            if (dragging){
+                this.dragging = false;
+                return;
+            }
             if (e.getButton() == MouseButton.PRIMARY) {
                 double worldX = (e.getX() - offsetX) / scale;
                 double worldY = (e.getY() - offsetY) / scale;
@@ -325,6 +344,7 @@ public class AppController {
         gc.translate(offsetX, offsetY);
         gc.scale(scale, scale);
         gc.setStroke(world.getGridColor());
+        // gc.setLineWidth((width*height)/);
         for (double x = 0; x <= width; x += CELL_SIZE)
             gc.strokeLine(x, 0, x, height);
 
