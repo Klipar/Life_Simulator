@@ -44,7 +44,18 @@ public class GridElement extends Base{
         return factors.get(factor);
     }
 
+    public void adjustFactorBy(String factor, int value){
+        this.setFactor(factor, this.getFactor(factor) + value);
+    }
+
     public void setFactor(String factor, int baseValue){
+        if ((factors.get(factor) + baseValue) > 100) {
+            factors.put(factor, 100);
+            return;
+        } else if ((factors.get(factor) + baseValue) < -100){
+            factors.put(factor, -100);
+            return;
+        }
         factors.put(factor, baseValue);
     }
 }
