@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.input.MouseButton;
@@ -11,6 +12,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -54,6 +56,9 @@ public class AppController {
 
     @FXML private Spinner<Integer> instrumentBrushSize;
     @FXML private Spinner<Integer> instrumentBrushPressure;
+
+    @FXML private ColorPicker colorLow;
+    @FXML private ColorPicker colorHeight;
 
     private final double HIDE_OFFSET = 50;
     private final double HIDE_OFFSET_Left_MenuButton = -50;
@@ -166,8 +171,6 @@ public class AppController {
             }
         });
 
-
-
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryForPresser =
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1);
 
@@ -191,9 +194,6 @@ public class AppController {
             } catch (NumberFormatException ignored) {
             }
         });
-
-
-
 
         StartStopSimulation.textProperty().bind(running.map(r -> r ? "Stop" : "Start"));
 
@@ -293,6 +293,18 @@ public class AppController {
             }
         });
 
+        colorLow.setValue(Color.BLUE);
+        colorHeight.setValue(Color.RED);
+
+        colorLow.setOnAction(event -> {
+            Color selectedColor = colorLow.getValue();
+            System.out.println("colorLow: " + selectedColor);
+        });
+
+        colorHeight.setOnAction(event -> {
+            Color selectedColor = colorHeight.getValue();
+            System.out.println("colorHeight: " + selectedColor);
+        });
 
         controlPanel.setTranslateY(HIDE_OFFSET_TOP_MENU);
         isControlPanelHidden = true;
@@ -406,7 +418,6 @@ public class AppController {
         transition.play();
     }
 
-
     @FXML
     private void showControlPanel() {
         if (!isControlPanelHidden) return;
@@ -426,7 +437,6 @@ public class AppController {
         transition.setToY(offsetY);
         transition.play();
     }
-
 
     public void UpdateCanvas (GraphicsContext gc){
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
