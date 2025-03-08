@@ -4,6 +4,11 @@ public class Base {
     private int X;
     private int Y;
 
+    public Base(Base base) {
+        this.X = base.getX();
+        this.Y = base.getY();;
+    }
+
     public Base(int X, int Y) {
         this.X = X;
         this.Y = Y;
@@ -25,6 +30,10 @@ public class Base {
         this.X = X;
     }
 
+    public void setBase (Base base){
+        X = base.getX();
+        Y = base.getY();
+    }
     @Override
     public String toString() {
         return "(" + X + ", " + Y + ")";
@@ -38,6 +47,4 @@ public class Base {
         Base myClass = (Base) obj;
         return this.X == myClass.getX() && this.Y == myClass.getY();
     }
-
-
 }

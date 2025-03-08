@@ -7,12 +7,14 @@ public class World extends Base{
     private Color backgroundColor = Color.rgb(255, 255, 255);
     private Color gridColor = Color.LIGHTGRAY;
 
+    private Base worldMaxCords = new Base(0,0); //start from 1 to X,Y
     //does the world loop along one of its axes?
     private boolean XCycle;
     private boolean YCycle;
 
     public World(Base base, boolean XCycle, boolean YCycle){
         super(base.getX(), base.getY());
+        this.worldMaxCords.setBase(base);
         this.world = new GridElement[base.getX()][base.getY()]; // creating an array of a certain size
 
         while (base.getX() > 0){
@@ -97,5 +99,14 @@ public class World extends Base{
 
     public void setGridColor(Color gridColor) {
         this.gridColor = gridColor;
+    }
+
+    public GridElement getGridElement(Base base){
+        if (base.getX() > (this.worldMaxCords.getX()-1)
+        || base.getY() > (this.worldMaxCords.getY()-1)
+        || base.getX() < 0 || base.getY() < 0){
+            return null;
+        }
+        return world[base.getX()][base.getY()];
     }
 }

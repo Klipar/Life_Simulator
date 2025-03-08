@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -15,12 +16,23 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
 import javafx.util.Duration;
 
 import com.life_simulator.simulation_realization.Cell;
+import com.life_simulator.simulation_realization.VisualizationOnTheField;
 import com.life_simulator.simulation_realization.World;
-import com.life_simulator.simulation_realization.Base;
+import com.life_simulator.simulation_realization.Factors.Factors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.UnaryOperator;
+
+import com.life_simulator.simulation_realization.Instruments.Instrument;
+import com.life_simulator.simulation_realization.Base;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 
 
 public class AppController {
@@ -37,6 +49,12 @@ public class AppController {
     @FXML private Button toggleLeftMenuButton;
     @FXML private Rectangle leftMenuHitbox;
 
+    @FXML private ComboBox<String> selectionVisualizationType;
+    @FXML private ComboBox<String> selectionInstrumentType;
+
+    @FXML private Spinner<Integer> instrumentBrushSize;
+    @FXML private Spinner<Integer> instrumentBrushPressure;
+
     private final double HIDE_OFFSET = 50;
     private final double HIDE_OFFSET_Left_MenuButton = -50;
     private boolean isHiddenRightMenuButton = false;
@@ -44,6 +62,8 @@ public class AppController {
     private final BooleanProperty running = new SimpleBooleanProperty(false);
     private boolean isControlPanelHidden = false;
     private static final double HIDE_OFFSET_TOP_MENU = -60;
+
+    // private ArrayList<Instrument> instruments;
 
     private boolean isRightMenuOpen = true;
     private boolean isLeftMenuOpen = true;
@@ -70,6 +90,9 @@ public class AppController {
     @SuppressWarnings("unused")
     @FXML
     public void initialize() {
+        Factors.setClassFactors(new ArrayList<>(Arrays.asList("LevelOfOrganicContamination", "Temperature", "LightingLevel", "AcidityLevel", "HumidityLevel")));
+        selectionVisualizationType.setValue(VisualizationOnTheField.getCurrentDisplayType());
+        selectionInstrumentType.setValue(Instrument.getCurrentInstrument());
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         toggleRightMenuButton.setOnAction(e -> toggleRightMenu());
@@ -111,9 +134,66 @@ public class AppController {
                 if (!base.equals(DraggsBuffer)){
                     DraggsBuffer = base;
                     System.out.println("GridElement: " + base);
+                    if (Instrument.getCurrentInstrument() == Instrument.getInstruments().get(1)){
+                        if (!world.DeleteCell(world.getCell(base))) world.AddCell(new Cell(base));
+                        UpdateCanvas(gc);
+                    }
                 }
             }
         });
+
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1, 1);
+
+        instrumentBrushSize.setValueFactory(valueFactory);
+        instrumentBrushSize.setEditable(true);
+        UnaryOperator<TextFormatter.Change> integerFilter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("[1-9][0-9]*")) {
+                return change;
+            }
+            return null;
+        };
+
+        instrumentBrushSize.getEditor().setTextFormatter(new TextFormatter<>(integerFilter));
+        instrumentBrushSize.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            try {
+                int enteredValue = Integer.parseInt(newValue);
+                if (enteredValue >= 1) {
+                    instrumentBrushSize.getValueFactory().setValue(enteredValue);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        });
+
+
+
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryForPresser =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1);
+
+        instrumentBrushPressure.setValueFactory(valueFactoryForPresser);
+        instrumentBrushPressure.setEditable(true);
+        UnaryOperator<TextFormatter.Change> integerFilterForPresser = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("[1-9][0-9]*")) {
+                return change;
+            }
+            return null;
+        };
+
+        instrumentBrushPressure.getEditor().setTextFormatter(new TextFormatter<>(integerFilterForPresser));
+        instrumentBrushPressure.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            try {
+                int enteredValue = Integer.parseInt(newValue);
+                if (enteredValue >= 1) {
+                    instrumentBrushPressure.getValueFactory().setValue(enteredValue);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        });
+
+
+
 
         StartStopSimulation.textProperty().bind(running.map(r -> r ? "Stop" : "Start"));
 
@@ -121,8 +201,7 @@ public class AppController {
             if (dragging){
                 this.dragging = false;
                 return;
-            }
-            if (e.getButton() == MouseButton.PRIMARY) {
+            }else {
                 double worldX = (e.getX() - offsetX) / scale;
                 double worldY = (e.getY() - offsetY) / scale;
                 Base base = new Base ((int)(worldX / CELL_SIZE), (int)(worldY / CELL_SIZE));
@@ -130,7 +209,16 @@ public class AppController {
                 if (base.getY() > (world.getY() - 1) || base.getY() < 0 || worldY < 0) base.setY(-1);
                 System.out.println("Cell: (" + base.getX() + ", " + base.getY() + ")");
 
-                if (!world.DeleteCell(world.getCell(base))) world.AddCell(new Cell(base));
+                Instrument.setInstrumentBrushSize(instrumentBrushSize.getValue()-1);
+                Instrument.setInstrumentBrushPressure(instrumentBrushPressure.getValue());
+
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    Instrument.act(world, base, false);
+                } else if (e.getButton() == MouseButton.SECONDARY){
+                    Instrument.act(world, base, true);
+                }
+                System.out.println(world.getGridElement(base));
+                // if (!world.DeleteCell(world.getCell(base))) world.AddCell(new Cell(base));
                 UpdateCanvas(gc);
             }
         });
@@ -188,8 +276,26 @@ public class AppController {
         toggleRightMenu();
         toggleLeftMenu();
 
-    controlPanel.setTranslateY(HIDE_OFFSET_TOP_MENU);
-    isControlPanelHidden = true;
+        selectionVisualizationType.setItems(FXCollections.observableArrayList(VisualizationOnTheField.getTypeOfDisplay()));
+
+        selectionVisualizationType.setOnAction(event -> {
+            VisualizationOnTheField.setCurrentDisplayType(selectionVisualizationType.getValue());
+        });
+
+        selectionInstrumentType.setItems(FXCollections.observableArrayList(Instrument.getInstruments()));
+
+        selectionInstrumentType.setOnAction(event -> {
+            Instrument.setCurrentInstrument(selectionInstrumentType.getValue());
+            if (Instrument.getCurrentInstrument() == Instrument.getInstruments().get(0)){
+                updateSpinnerRange(1, 1);
+            } else{
+                updateSpinnerRange(1, ((world.getX() > world.getX()) ? (world.getX() / Instrument.brushSizeFactor) : (world.getY() / Instrument.brushSizeFactor)));
+            }
+        });
+
+
+        controlPanel.setTranslateY(HIDE_OFFSET_TOP_MENU);
+        isControlPanelHidden = true;
 
         gameLoop.setDaemon(true);
         gameLoop.start();
@@ -372,5 +478,13 @@ public class AppController {
             base.setX(base.getX()+1);
         }
         gc.restore();
+    }
+
+    public void updateSpinnerRange(int min, int max) {
+        SpinnerValueFactory.IntegerSpinnerValueFactory factory =
+            (SpinnerValueFactory.IntegerSpinnerValueFactory) instrumentBrushSize.getValueFactory();
+
+        factory.setMin(min);
+        factory.setMax(max);
     }
 }

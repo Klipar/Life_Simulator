@@ -1,11 +1,14 @@
 package com.life_simulator.simulation_realization;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 
 public class Cell extends Base {
+    private static ArrayList<String> VisualizationTypes = new ArrayList<>(Arrays.asList("Cell type mode", "Genome mode", "Ancestor mods"));
     private Color color = Color.ORANGE;
     private int type = 0;
 
@@ -93,5 +96,13 @@ public class Cell extends Base {
 
     public Color getColor (){
         return color;
+    }
+
+    public static ArrayList<String> getVisualizationTypes() {
+        return VisualizationTypes;
+    }
+
+    public static void setVisualizationTypes(ArrayList<String> visualizationTypes) {
+        VisualizationTypes = visualizationTypes;
     }
 }

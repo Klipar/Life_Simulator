@@ -1,14 +1,15 @@
 package com.life_simulator.simulation_realization;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import com.life_simulator.simulation_realization.Factors.Factors;
+
 public class GridElement extends Base{
-    private Cell cell;
-    private Map <String, Integer> factors = new HashMap<>();
+    private Cell cell = null;
+    private Factors factors = new Factors();
 
     public GridElement(Base base){
-        super(base.getX(), base.getY());
+        super(base.getX()-1, base.getY()-1);
     }
 
     public boolean AddCell (Cell cell_inp){
@@ -33,29 +34,31 @@ public class GridElement extends Base{
     }
 
     public Map<String, Integer> getFactors() {
-        return factors;
-    }
-
-    public void setFactors(Map<String, Integer> factors) {
-        this.factors = factors;
+        return factors.getFactorsAndValues();
     }
 
     public int getFactor(String factor){
-        return factors.get(factor);
+        return this.factors.getFactorValue(factor);
     }
 
     public void adjustFactorBy(String factor, int value){
-        this.setFactor(factor, this.getFactor(factor) + value);
+        this.factors.adjustFactorBy(factor, value);
     }
 
-    public void setFactor(String factor, int baseValue){
-        if ((factors.get(factor) + baseValue) > 100) {
-            factors.put(factor, 100);
-            return;
-        } else if ((factors.get(factor) + baseValue) < -100){
-            factors.put(factor, -100);
-            return;
+    public void setFactorValue(String factor, int baseValue){
+        this.factors.setFactorValue(factor,baseValue);
+        return;
+    }
+
+    @Override
+    public String toString() {
+        String str = new String();
+        str += "GridElement on: (" + this.getX() + ", " + this.getY() + ")\n";
+        str += "Life: " + ((this.getCell() != null) ? "true" : "false") + "\n";
+        for (String key : factors.getFactorsAndValues().keySet()) {
+            Integer value = factors.getFactorsAndValues().get(key);
+            str += key + ": " + value + "\n";
         }
-        factors.put(factor, baseValue);
+        return str;
     }
 }
