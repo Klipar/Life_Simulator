@@ -7,6 +7,8 @@ import java.util.Map;
 public class Factors {
     static private ArrayList<Factors> instances = new ArrayList<>();
 
+    public static final short LimitFactorValues = 100;
+
     static private ArrayList<String> factors = new ArrayList<>();
     static private String CurrentFactor;
 
