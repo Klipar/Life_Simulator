@@ -4,12 +4,12 @@ import com.life_simulator.simulation_realization.Factors.Factors;
 
 import javafx.scene.paint.Color;
 
-public class ColorsProcessor {
+public class FactorsColorsProcessor {
     private Color colorLow = Color.rgb(0, 0, 255);
     private Color colorMiddle = Color.rgb(255, 255, 255);
     private Color colorHeight = Color.rgb(255, 0, 0);
 
-    public ColorsProcessor(){
+    public FactorsColorsProcessor(){
         return;
     }
 

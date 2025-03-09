@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.life_simulator.simulation_realization.FactorsColorsProcessor;
+
 public class Factors {
     static private ArrayList<Factors> instances = new ArrayList<>();
 
@@ -11,6 +13,7 @@ public class Factors {
 
     static private ArrayList<String> factors = new ArrayList<>();
     static private String CurrentFactor;
+    static private Map <String, FactorsColorsProcessor> factorsAndColors = new HashMap<>();
 
     private Map <String, Integer> factorsAndValues = new HashMap<>();
 
@@ -29,6 +32,14 @@ public class Factors {
             return false;
     }
 
+    static private boolean RemoveColor (String key){
+        if (factorsAndColors.containsKey(key)) {
+            factorsAndColors.remove(key);
+            return true;
+        } else
+            return false;
+    }
+
     private boolean AddFactor (String key, int value){
         if (!factorsAndValues.containsKey(key)) {
             factorsAndValues.put(key, value);
@@ -37,8 +48,28 @@ public class Factors {
             return false;
     }
 
+    private static boolean AddColor (String key){
+        if (!factorsAndColors.containsKey(key)) {
+            factorsAndColors.put(key, new FactorsColorsProcessor());
+            return true;
+        } else
+            return false;
+    }
+
     public Map<String, Integer> getFactorsAndValues() {
         return factorsAndValues;
+    }
+
+    public static Map<String, FactorsColorsProcessor> getFactorsAndColors() {
+        return factorsAndColors;
+    }
+
+    public FactorsColorsProcessor getFactorColor(String factor){
+        if (factor == null) {
+            System.err.println("factor == null");
+            return null;
+        }
+        return factorsAndColors.get(factor);
     }
 
     public int getFactorValue(String factor){
@@ -80,6 +111,7 @@ public class Factors {
             for (Factors instance : instances) {
                 instance.RemoveFactor(FactorToDelete);
             }
+            Factors.RemoveColor(FactorToDelete);
         }
 
         ArrayList<String> FactorsToAdd = new ArrayList<>(updateFactors);
@@ -89,6 +121,7 @@ public class Factors {
             for (Factors instance : instances) {
                 instance.AddFactor(FactorToAdd, newFactorValue);
             }
+            Factors.AddColor(FactorToAdd);
         }
         Factors.factors = updateFactors;
 
