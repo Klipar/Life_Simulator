@@ -8,7 +8,7 @@ import java.util.Random;
 import javafx.scene.paint.Color;
 
 public class Cell extends Base {
-    private static ArrayList<String> VisualizationTypes = new ArrayList<>(Arrays.asList("Cell type mode", "Genome mode", "Ancestor mods"));
+    private static ArrayList<String> VisualizationTypes = new ArrayList<>(Arrays.asList("Cell type mode", "Genome mode", "Ancestor mods", "Energy mod", "Resistant mode"));
     private Color color = Color.ORANGE;
     private int type = 0;
 
