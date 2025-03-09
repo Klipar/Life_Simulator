@@ -21,13 +21,13 @@ public class FactorsColorsProcessor {
                              getPortionInt((int)(colorMiddle.getGreen() * 255), (int)(colorHeight.getGreen() * 255), inp),
                              getPortionInt((int)(colorMiddle.getBlue()  * 255), (int)(colorHeight.getBlue()  * 255), inp));
         else
-            return Color.rgb(getPortionInt((int)(colorMiddle.getRed()   * 255), (int)(colorLow.getRed()   * 255), inp),
-                             getPortionInt((int)(colorMiddle.getGreen() * 255), (int)(colorLow.getGreen() * 255), inp),
-                             getPortionInt((int)(colorMiddle.getBlue()  * 255), (int)(colorLow.getBlue()  * 255), inp));
+            return Color.rgb(getPortionInt((int)(colorMiddle.getRed()   * 255), (int)(colorLow.getRed()   * 255), inp*-1),
+                             getPortionInt((int)(colorMiddle.getGreen() * 255), (int)(colorLow.getGreen() * 255), inp*-1),
+                             getPortionInt((int)(colorMiddle.getBlue()  * 255), (int)(colorLow.getBlue()  * 255), inp*-1));
     }
 
-    private int getPortionInt(int from, int to, int portion){
-        return (int)((from-to)/Factors.LimitFactorValues)+to;
+    private int getPortionInt(int from, int to, int portion){ //linear interpolation
+        return (int)to+((from-to)*(Factors.LimitFactorValues-portion))/Factors.LimitFactorValues;
     }
 
 

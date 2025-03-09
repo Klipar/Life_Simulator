@@ -441,8 +441,8 @@ public class AppController {
     public void UpdateCanvas (GraphicsContext gc){
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         FillBackgroundCanvas(gc);
-        drawGrid(gc);
         drawCells(gc);
+        drawGrid(gc);
     }
 
     private void FillBackgroundCanvas(GraphicsContext gc) {
@@ -478,10 +478,8 @@ public class AppController {
 
         while (base.getX() < world.getX()){
             while(base.getY() < world.getY()){
-                if (world.getCell(base) != null) {
-                    gc.setFill(world.getCell(base).getColor());
-                    gc.fillRect(base.getX() * CELL_SIZE, base.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                }
+                gc.setFill(world.getGridElement(base).getColor());
+                gc.fillRect(base.getX() * CELL_SIZE, base.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                 base.setY(base.getY()+1);
             }
             base.setY(0);

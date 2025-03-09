@@ -1,6 +1,7 @@
 package com.life_simulator.simulation_realization;
 
 import java.util.Map;
+import javafx.scene.paint.Color;
 
 import com.life_simulator.simulation_realization.Factors.Factors;
 
@@ -60,5 +61,11 @@ public class GridElement extends Base{
             str += key + ": " + value + "\n";
         }
         return str;
+    }
+
+    public Color getColor(){
+        if (Factors.getClassFactors().contains(VisualizationOnTheField.getCurrentDisplayType()))
+            return factors.getFactorColor(VisualizationOnTheField.getCurrentDisplayType()).GetColorFromValue(factors.getFactorValue(VisualizationOnTheField.getCurrentDisplayType()));
+            return Color.ORANGE; //return cell color
     }
 }
